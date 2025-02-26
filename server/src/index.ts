@@ -3,7 +3,7 @@ import {createServer} from 'http';
 import {Server, Socket} from 'socket.io';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import getRandomHexColor from "./utils";
+import {getRandomHexColor, getDistanceBetween2Dots, generateRandomNumber} from "./utils";
 
 dotenv.config();
 
@@ -22,6 +22,7 @@ app.use(cors());
 const PORT = process.env.PORT || 4000; // Default to 4000 if PORT is not set in .env
 const MAX_X = 760;
 const MAX_Y = 760;
+const DISTANCE_TO_ATTACK = 100;
 
 interface Player {
     id: string;
@@ -29,7 +30,7 @@ interface Player {
     health: number;
     name: string;
     color: string;
-    playerIdsToAttack: string[];
+    playerIdsToAttack: { [id: string]: string };
 }
 
 const players: { [id: string]: Player } = {};
@@ -48,7 +49,7 @@ io.on('connection', (socket: Socket) => {
         health: 100,
         name: "Player" + socket.id, // Default name, can be updated later
         color: getRandomHexColor(),
-        playerIdsToAttack: []
+        playerIdsToAttack: {}
     };
 
     // Log new player data
@@ -70,6 +71,22 @@ io.on('connection', (socket: Socket) => {
             if (player.position.y < 0 || player.position.y > MAX_Y) {
                 player.position.y -= movementData.y;
             }
+
+
+            for (const ply of Object.values(players)) {
+                if (ply.id != player.id) {
+                    const distance = getDistanceBetween2Dots(player.position.x, player.position.y, ply.position.x, ply.position.y);
+                    console.log(`Distance: ${distance}`);
+                    if (distance <= DISTANCE_TO_ATTACK) {
+                        player.playerIdsToAttack[ply.id] = ply.name;
+                        ply.playerIdsToAttack[player.id] = player.name;
+                    } else {
+                        delete player.playerIdsToAttack[ply.id];
+                        delete ply.playerIdsToAttack[player.id];
+                    }
+                }
+            }
+
             console.log(`Player ${socket.id} - moved to position: ${JSON.stringify(player.position)}`);
             io.emit('playerMoved', player);
         }
@@ -77,14 +94,19 @@ io.on('connection', (socket: Socket) => {
 
     // Handle player attacks
     socket.on('attack', (targetId: string) => {
-        const player = players[targetId];
-        if (player) {
-            player.health -= 10; // Simple damage calculation
-            console.log(`Player ${socket.id} attacked player ${targetId}: New health of ${targetId} is ${player.health}`);
-            io.emit('playerAttacked', player);
-            if (player.health <= 0) {
-                console.log(`Player ${targetId} defeated by player ${socket.id}`);
-                io.emit('playerDefeated', player);
+        const targetPlayer = players[targetId];
+        const player = players[socket.id];
+        if (targetPlayer && player) {
+            if (player.playerIdsToAttack[targetPlayer.id]) {
+                targetPlayer.health -= 10; // Simple damage calculation
+                console.log(`Player ${socket.id} attacked player ${targetId}: New health of ${targetId} is ${player.health}`);
+                io.emit('playerAttacked', targetPlayer);
+                if (targetPlayer.health <= 0) {
+                    console.log(`Player ${targetId} defeated by player ${socket.id}`);
+                    io.emit('playerDefeated', targetPlayer);
+                }
+            } else {
+                console.log(`Player ${player.id} can not attack Player $${targetPlayer.id}`);
             }
         }
     });
@@ -107,8 +129,8 @@ io.on('connection', (socket: Socket) => {
             if (playerData.name) player.name = playerData.name;
             if (playerData.color) player.color = playerData.color;
             player.health = 100;
-            player.playerIdsToAttack = [];
-            player.position = {x: 0, y: 0};
+            player.playerIdsToAttack = {};
+            player.position = {x: generateRandomNumber(), y: generateRandomNumber()};
             console.log(`Player ${socket.id} - data: ${JSON.stringify(player)}`);
             io.emit('playerUpdated', player);
         }
@@ -118,6 +140,9 @@ io.on('connection', (socket: Socket) => {
     socket.on('disconnect', () => {
         console.log(`Player ${socket.id} - disconnected`);
         delete players[socket.id];
+        for (const ply of Object.values(players)) {
+            delete ply.playerIdsToAttack[socket.id];
+        }
         io.emit('playerDisconnected', socket.id);
     });
 });
