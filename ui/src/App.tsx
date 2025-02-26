@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {io, Socket} from "socket.io-client";
 import "./App.css"; // Import the CSS file
-import {count} from "console";
 
 // Define the Player interface for TypeScript
 interface Player {
