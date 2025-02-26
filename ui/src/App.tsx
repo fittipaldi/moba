@@ -9,7 +9,7 @@ interface Player {
     health: number;
     name: string;
     color: string;
-    playerIdsToAttack: string[];
+    playerIdsToAttack: {};
 }
 
 let socketGlobal: Socket;
@@ -19,12 +19,7 @@ function App() {
     const [playerName, setPlayerName] = useState<string | null>();
     const [playerId, setPlayerId] = useState<string>();
     const [attackedPlayerId, setAttackedPlayerId] = useState<string | null>();
-    const [isAttacking, setIsAttacking] = useState<boolean>(false);
 
-
-    const styleSheet = document.styleSheets[0];
-
-    // Fetch the initial players and listen for updates
     useEffect(() => {
         const socket: Socket = io("http://localhost:4000");
         socketGlobal = socket;
@@ -96,56 +91,44 @@ function App() {
             });
         });
 
-        // Function to handle keydown events
-        const handleKeyDown = (e: any) => {
+        return () => {
+            socket.disconnect();
+            socket.close();
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
             switch (e.key) {
                 case 'a':
-
-
-                    console.log(players);
-
-                    if (socket.id) {
-                        const player = players[socket.id];
-
-                        console.log(player);
-
-
-                        // Object.values(players.playerIdsToAttack).map((pId, player) => (
-                        //     attackPlayer(pId)
-                        // ));
+                    if (playerId) {
+                        attackNearPlayer(playerId);
                     }
                     break;
                 case 'ArrowUp':
                     movePlayer('up');
-                    console.log('Arrow Up key pressed');
                     break;
                 case 'ArrowDown':
                     movePlayer('down');
-                    console.log('Arrow Down key pressed');
                     break;
                 case 'ArrowLeft':
                     movePlayer('left');
-                    console.log('Arrow Left key pressed');
                     break;
                 case 'ArrowRight':
                     movePlayer('right');
-                    console.log('Arrow Right key pressed');
                     break;
-
                 default:
                     break;
             }
         };
 
-        // Add the event listener
         window.addEventListener('keydown', handleKeyDown);
 
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
-            socket.disconnect();
-            socket.close();
         };
-    }, []);
+    }, [players, playerId]);
+
 
     // Handle player movement
     const movePlayer = (direction: "up" | "down" | "left" | "right") => {
@@ -161,6 +144,18 @@ function App() {
     const attackPlayer = (targetId: string) => {
         socketGlobal.emit("attack", targetId);
     };
+
+    const attackNearPlayer = (playerId: string) => {
+        const player = players[playerId];
+        if (player) {
+            if (player.playerIdsToAttack) {
+                Object.keys(player.playerIdsToAttack).forEach(targetId => {
+                    console.log(`Target: ${targetId}`);
+                    attackPlayer(targetId);
+                });
+            }
+        }
+    }
 
     const updatePlayer = () => {
         const name = prompt("Enter new name:");
@@ -180,6 +175,7 @@ function App() {
                 <h1>MOBA Game</h1>
                 <p>Players Online: {Object.values(players).length}</p>
                 <p>Your ID: {playerId}</p>
+                <p>Your Player Name: {playerName}</p>
                 <div>
                     <button onClick={() => movePlayer("up")}>Up</button>
                     <button onClick={() => movePlayer("down")}>Down</button>
