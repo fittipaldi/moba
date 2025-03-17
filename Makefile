@@ -13,6 +13,11 @@ stop-apps: ## Stop server and ui apps
 	pkill -f 'npm run dev' || echo "No process found"
 	echo "Applications stopped!"
 
+.PHONY: kill-apps
+kill-apps: ## Kill server and ui apps
+	ps aux | grep -E 'node|moba' | grep -v grep | awk '{print $2}' | xargs kill -9
+
+
 help:
 	@echo "Available commands:"
 	@printf "%-30s %s\n" "Command" "Description"
