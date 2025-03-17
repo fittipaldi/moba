@@ -2,9 +2,9 @@
 .PHONY: start-apps
 start-apps: ## Start server and ui apps
 	# Start the server application by going to the folder and running npm run dev
-	cd server && npm run dev &
+	cd server && npm install && npm run dev &
 	# Start the UI application by going to the folder and running npm run dev
-	cd ui && npm run dev &
+	cd ui && npm install --legacy-peer-deps && npm run dev &
 	echo "Both applications (Server and UI) are running!"
 
 .PHONY: stop-apps
