@@ -1,13 +1,207 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 210 40% 98%;
+        --foreground: 222.2 84% 4.9%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 84% 4.9%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 222.2 84% 4.9%;
+
+        --primary: 221 83% 53%;
+        --primary-foreground: 210 40% 98%;
+
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 222.2 47.4% 11.2%;
+
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 221 83% 53%;
+
+        --radius: 0.75rem;
+
+        /* Game specific colors */
+        --game-background: 220 20% 97%;
+        --game-terrain: 210 30% 95.9%;
+        --game-player: 221 83% 53%;
+        --game-enemy: 220 14% 96%;
+        --game-health: 142 71% 45%;
+        --game-attack: 0 84% 60%;
+        --game-map: 220 14% 96%;
+        --game-accent: 221 83% 53%;
+    }
+
+    .dark {
+        --background: 222.2 84% 4.9%;
+        --foreground: 210 40% 98%;
+
+        --card: 222.2 84% 4.9%;
+        --card-foreground: 210 40% 98%;
+
+        --popover: 222.2 84% 4.9%;
+        --popover-foreground: 210 40% 98%;
+
+        --primary: 217.2 91.2% 59.8%;
+        --primary-foreground: 222.2 47.4% 11.2%;
+
+        --secondary: 217.2 32.6% 17.5%;
+        --secondary-foreground: 210 40% 98%;
+
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+
+        --accent: 217.2 32.6% 17.5%;
+        --accent-foreground: 210 40% 98%;
+
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 217.2 32.6% 17.5%;
+        --input: 217.2 32.6% 17.5%;
+        --ring: 224.3 76.3% 48%;
+    }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground font-sans antialiased;
+        font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-secondary/50 rounded-full;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-primary/50 rounded-full transition-colors;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-primary/70;
+    }
+}
+
+@layer components {
+    .game-container {
+        @apply w-full h-full flex flex-col lg:flex-row items-center justify-center gap-6 p-6 overflow-hidden;
+    }
+
+    .game-map {
+        @apply relative w-[800px] h-[800px] bg-game-map rounded-2xl border border-border/40 shadow-lg overflow-hidden transition-all duration-300 ease-out;
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05),
+        0 1px 4px rgba(0, 0, 0, 0.05),
+        0 6px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .game-player {
+        @apply absolute flex flex-col items-center justify-center transition-all duration-150 ease-out z-10;
+    }
+
+    .game-player-avatar {
+        @apply flex items-center justify-center rounded-full shadow-md transition-all duration-150 ease-out cursor-pointer;
+    }
+
+    .game-player-info {
+        @apply absolute -top-8 min-w-[100px] text-xs font-medium bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm text-center whitespace-nowrap transition-all ease-out;
+        transform: translateY(-5px);
+    }
+
+    .game-player-health {
+        @apply absolute -bottom-2 h-1 rounded-full bg-gray-200 overflow-hidden transition-all duration-150 ease-out;
+        width: 32px;
+    }
+
+    .game-player-health-inner {
+        @apply h-full bg-game-health rounded-full transition-all duration-300 ease-out;
+    }
+
+    .game-controls {
+        @apply flex flex-col w-full lg:w-[300px] h-auto lg:h-[800px] bg-white/90 backdrop-blur-sm rounded-2xl p-6 gap-6 overflow-y-auto transition-all duration-300 ease-out shadow-lg;
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05),
+        0 1px 4px rgba(0, 0, 0, 0.05),
+        0 6px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .game-button {
+        @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 outline-none focus:ring-2 focus:ring-primary/60 hover:bg-primary hover:text-white active:scale-[0.98];
+    }
+
+    .game-button-primary {
+        @apply bg-primary text-white hover:bg-primary/90;
+    }
+
+    .game-button-secondary {
+        @apply bg-secondary text-foreground hover:bg-secondary/90;
+    }
+
+    .game-button-destructive {
+        @apply bg-destructive text-white hover:bg-destructive/90;
+    }
+
+    .game-attack-effect {
+        @apply absolute top-0 left-0 w-full h-full rounded-full bg-game-attack/20 pointer-events-none animate-ripple;
+    }
+
+    .game-movement-controls {
+        @apply grid grid-cols-3 grid-rows-3 gap-2 mt-4 justify-center items-center;
+    }
+
+    .game-movement-button {
+        @apply flex items-center justify-center w-full h-10 rounded-lg bg-secondary/80 hover:bg-secondary transition-all duration-200 active:scale-[0.98];
+    }
+
+    .pulse-attack {
+        animation: pulse-attack 0.3s ease-in-out;
+    }
+
+    .player-list {
+        @apply mt-4 space-y-2 max-h-[200px] overflow-y-auto;
+    }
+
+    .player-list-item {
+        @apply flex items-center justify-between p-2 rounded-lg bg-secondary/50 border border-border/30;
+    }
+
+    .chip {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    }
+
+    .game-logo {
+        @apply text-center font-bold text-2xl relative;
+    }
+
+    .game-logo::after {
+        content: '';
+        @apply absolute bottom-0 left-0 w-full h-0.5 bg-primary/80 rounded-full;
+        transform: scaleX(0.6);
+        transform-origin: center;
+        transition: transform 0.3s ease;
+    }
+
+    .game-logo:hover::after {
+        transform: scaleX(1);
+    }
 }
