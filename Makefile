@@ -15,7 +15,9 @@ stop-apps: ## Stop server and ui apps
 
 .PHONY: kill-apps
 kill-apps: ## Kill server and ui apps
-	ps aux | grep -E 'node|moba' | grep -v grep | awk '{print $2}' | xargs kill -9
+	# Kill all processes related to "node" or "moba"
+	ps aux | grep -E 'node|moba' | grep -v grep | awk '{print $$2}' | xargs kill -9 || echo "No matching processes found"
+	echo "Applications stopped!"
 
 
 help:
