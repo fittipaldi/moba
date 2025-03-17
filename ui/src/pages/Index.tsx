@@ -16,7 +16,7 @@ interface Player {
 
 let socketGlobal: Socket;
 //const socketUrl = "http://localhost:4000";
-const socketUrl = "http://192.168.50.99:4000";
+const socketUrl = "http://lynx-devoted-mutt.ngrok-free.app/socketio";
 
 const Index = () => {
     const [players, setPlayers] = useState<{ [id: string]: Player }>({});

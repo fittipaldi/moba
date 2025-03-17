@@ -7,18 +7,16 @@ start-apps: ## Start server and ui apps
 	cd ui && npm install --legacy-peer-deps && npm run dev &
 	echo "Both applications (Server and UI) are running!"
 
-.PHONY: stop-apps
-stop-apps: ## Stop server and ui apps
-	# Kill the server process (adjust based on the command you used to start it)
-	pkill -f 'npm run dev' || echo "No process found"
-	echo "Applications stopped!"
-
 .PHONY: kill-apps
 kill-apps: ## Kill server and ui apps
 	# Kill all processes related to "node" or "moba"
 	ps aux | grep -E 'node|moba' | grep -v grep | awk '{print $$2}' | xargs kill -9 || echo "No matching processes found"
 	echo "Applications stopped!"
 
+.PHONY: start-ngrok
+start-ngrok: ## Start Ngrok
+	# Start ngrok with the specified URL and port
+	ngrok http --url=lynx-devoted-mutt.ngrok-free.app 81
 
 help:
 	@echo "Available commands:"
