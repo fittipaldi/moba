@@ -1,14 +1,17 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 .idea
+.DS_Store
 
 # server
 /server/node_modules
 /server/dist
 /server/.env
+/server/.DS_Store
 
 # ui
 /ui/node_modules
 /ui/build
+/ui/.DS_Store
 
 # misc
 /ui/.env
