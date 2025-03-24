@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moba-socketio-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moba-socketio-app
+  template:
+    metadata:
+      labels:
+        app: moba-socketio-app
+    spec:
+      containers:
+        - name: moba-socketio-app
+          image: moba-socketio-app  # Use the local image name
+          imagePullPolicy: Never  # Prevent Kubernetes from pulling from a remote registry
+          ports:
+            - containerPort: 4000
