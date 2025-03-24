@@ -7,6 +7,7 @@ spec:
     app: moba-socketio-app
   ports:
     - protocol: TCP
-      port: 4000        # External port
-      targetPort: 4000  # Internal container port
+      port: 4000      # External port of the service
+      targetPort: 4000  # Port inside the container
+      nodePort: 4000  # The NodePort you want to expose (optional)
   type: NodePort
