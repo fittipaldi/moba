@@ -9,5 +9,5 @@ spec:
     - protocol: TCP
       port: 4000      # External port of the service
       targetPort: 4000  # Port inside the container
-      nodePort: 40001  # The NodePort you want to expose (optional)
+      nodePort: 30001  # The NodePort you want to expose (optional)
   type: NodePort
