@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: moba-socketio-app
-          image: moba-socketio-app  # Use the local image name
-          imagePullPolicy: Never  # Prevent Kubernetes from pulling from a remote registry
+          image: fittipaldi/moba-socketio-app:latest  # Ensure correct tag
+          imagePullPolicy: Always
           ports:
             - containerPort: 4000

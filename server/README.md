@@ -6,11 +6,13 @@ This server is running the socketIO and for this we need to run the socketIO ser
 
 I am using the image name as `moba-socketio-app`
 ```bash
-docker build -t name-of-image .
+docker build -t username/name-of-image .
 ```
 
 ### Kubernets - deploy the application
 
+You have to run these commands on the deploy folder
 ```bash
+kubectl apply -f service.yaml
 kubectl apply -f deployment.yaml
 ```
