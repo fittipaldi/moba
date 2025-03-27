@@ -7,6 +7,6 @@ spec:
   ports:
     - port: 4000        # External port of the service
       targetPort: 4000   # Port inside the container
-      nodePort: 30000   # The NodePort you want to expose (you can change)
+      nodePort: 30001   # The NodePort you want to expose (you can change)
   selector:
     app: moba-socketio-app-service
