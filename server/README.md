@@ -16,3 +16,8 @@ You have to run these commands on the deploy folder
 kubectl apply -f service.yaml
 kubectl apply -f deployment.yaml
 ```
+
+Delete a pod for you can recreate using the apply
+```bash
+sudo kubectl delete deployment {_service_name_}
+```
