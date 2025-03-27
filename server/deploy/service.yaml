@@ -3,10 +3,11 @@ kind: Service
 metadata:
   name: moba-socketio-app-service
 spec:
-  type: NodePort  # LoadBalancer support
-  ports:
-    - port: 4000        # External port of the service
-      targetPort: 4000   # Port inside the container
-      nodePort: 30001   # The NodePort you want to expose (you can change)
   selector:
     app: moba-socketio-app-service
+  ports:
+    - protocol: TCP
+      port: 4000        # External port inside the cluster
+      targetPort: 4000   # The port your container is listening on
+      nodePort: 30001    # Choose a port in the valid range (e.g., 30001)
+  type: NodePort
