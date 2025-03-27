@@ -3,18 +3,22 @@ kind: Deployment
 metadata:
   name: moba-socketio-app
 spec:
-  replicas: 1
+  replicas: 1  # Number of replicas for the application
   selector:
     matchLabels:
-      app: moba-socketio-app
+      app: moba-socketio
   template:
     metadata:
       labels:
-        app: moba-socketio-app
+        app: moba-socketio
     spec:
       containers:
         - name: moba-socketio-app
-          image: fittipaldi/moba-socketio-app:latest  # Ensure correct tag
-          imagePullPolicy: Always
+          image: fittipaldi/moba-socketio-app:latest  # Docker image from Docker Hub
           ports:
-            - containerPort: 4000
+            - containerPort: 4000  # The port your app is listening to inside the container
+          env:
+            - name: PORT
+              value: "4000"  # Set the PORT environment variable
+            - name: NODE_ENV
+              value: "production"  # Example additional environment variable
