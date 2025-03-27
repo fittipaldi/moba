@@ -39,6 +39,10 @@ app.get('/', (req, res) => {
     res.send('MOBA Server');
 });
 
+app.get('/ping', (req, res) => {
+    res.send('PONG');
+});
+
 io.on('connection', (socket: Socket) => {
     console.log(`Player ${socket.id} - connected`);
 
