@@ -1,0 +1,8 @@
+services:
+  moba_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: moba_app
+    ports:
+      - "4000:4000"  # Change this according to your app's exposed port
